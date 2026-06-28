@@ -394,6 +394,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      pytest_error: ${{ steps.pytest_output.outputs.pytest_error }}
 
     steps:
       - name: Checkout repository
@@ -409,20 +411,49 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
 
-      - name: Run pytest suites
-        run: pytest
+      - name: Run pytest and capture output
+        run: |
+          set +e
+          pytest 2>&1 | tee pytest.log
+          exit_code=${PIPESTATUS[0]}
+          echo "PYTEST_EXIT_CODE=$exit_code" >> "$GITHUB_ENV"
+          exit 0
 
-  notify-discord-on-failure:
+      - name: Extract pytest error snippet
+        id: pytest_output
+        if: always()
+        run: |
+          {
+            echo "pytest_error<<EOF"
+            tail -n 20 pytest.log
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fail job if pytest failed
+        if: env.PYTEST_EXIT_CODE != '0'
+        run: exit 1
+
+  notify-discord:
     runs-on: ubuntu-latest
     needs: test
-    if: failure()
+    if: ${{ always() }}
 
     steps:
-      - name: Send failed job notification to Discord
-        uses: lacherogwu/failed-jobs-discord-notification-action@v1
+      - name: Send failure or success message to Discord
+        uses: appleboy/discord-action@v1.2.0
         with:
-          discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          needs_json: ${{ toJSON(needs) }}
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: "GitHub Actions"
+          message: |
+            Workflow: TDD Aircon Settings CI
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Actor: ${{ github.actor }}
+            Result: ${{ needs.test.result }}
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Pytest output:
+            ${{ needs.test.outputs.pytest_error }}
 ```
 
 ### What this workflow does
@@ -434,9 +465,10 @@ jobs:
 - Installs Python
 - Installs `pytest`
 - Runs `pytest`
-- Sends a Discord notification if the test job fails
+- Captures the pytest output
+- Sends a Discord notification after every run, whether tests pass or fail
 
-This means the same tests you run locally are also verified automatically in GitHub, and failures are pushed to Discord for visibility.
+This means the same tests you run locally are also verified automatically in GitHub, and the workflow result is posted to Discord for visibility.
 
 ## Step 15: Add the Discord webhook secret
 
@@ -511,7 +543,7 @@ After pushing:
 
 If everything is correct, you should see a green check mark.
 
-If the tests fail, GitHub Actions will mark the workflow as failed and the Discord notification job will send an alert to the configured channel.
+If the tests fail, GitHub Actions will mark the workflow as failed, and the Discord notification will still run and post the result together with the captured pytest output.
 
 ## Project structure
 
@@ -599,6 +631,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      pytest_error: ${{ steps.pytest_output.outputs.pytest_error }}
 
     steps:
       - name: Checkout repository
@@ -614,20 +648,49 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
 
-      - name: Run pytest suites
-        run: pytest
+      - name: Run pytest and capture output
+        run: |
+          set +e
+          pytest 2>&1 | tee pytest.log
+          exit_code=${PIPESTATUS[0]}
+          echo "PYTEST_EXIT_CODE=$exit_code" >> "$GITHUB_ENV"
+          exit 0
 
-  notify-discord-on-failure:
+      - name: Extract pytest error snippet
+        id: pytest_output
+        if: always()
+        run: |
+          {
+            echo "pytest_error<<EOF"
+            tail -n 20 pytest.log
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fail job if pytest failed
+        if: env.PYTEST_EXIT_CODE != '0'
+        run: exit 1
+
+  notify-discord:
     runs-on: ubuntu-latest
     needs: test
-    if: failure()
+    if: ${{ always() }}
 
     steps:
-      - name: Send failed job notification to Discord
-        uses: lacherogwu/failed-jobs-discord-notification-action@v1
+      - name: Send failure or success message to Discord
+        uses: appleboy/discord-action@v1.2.0
         with:
-          discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          needs_json: ${{ toJSON(needs) }}
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: "GitHub Actions"
+          message: |
+            Workflow: TDD Aircon Settings CI
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Actor: ${{ github.actor }}
+            Result: ${{ needs.test.result }}
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Pytest output:
+            ${{ needs.test.outputs.pytest_error }}
 ```
 
 ## ZOMBIES recap
