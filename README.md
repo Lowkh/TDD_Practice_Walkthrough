@@ -12,7 +12,7 @@ ZOMBIES is a simple guide for deciding what test to write next:
 - **E** = Exceptions
 - **S** = Simple scenarios, simple solutions
 
-The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.
+The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.[web:43][web:124][web:45][web:131]
 
 This tutorial uses a single production function:
 
@@ -25,7 +25,7 @@ def aircon_settings() -> str:
 
 ## What is GitHub Actions?
 
-GitHub Actions is GitHub’s built-in automation platform. It can automatically run tasks such as tests, builds, linting, packaging, and deployment whenever something happens in your repository, such as a push or a pull request.
+GitHub Actions is GitHub’s built-in automation platform. It can automatically run tasks such as tests, builds, linting, packaging, and deployment whenever something happens in your repository, such as a push or a pull request.[web:112][web:117]
 
 In this tutorial, GitHub Actions is used as a simple **continuous integration (CI)** tool. That means every time code is pushed to GitHub, GitHub automatically runs the test suite and reports whether it passed or failed.
 
@@ -93,25 +93,19 @@ cd tdd-aircon-settings
 
 ## Step 3: Install pytest and create folders
 
-Create a file named `requirements.txt`:
-
-```text
-pytest
-```
-
-Install it with:
+Install pytest directly:
 
 ```bash
-pip install -r requirements.txt
+pip install pytest
 ```
 
 If `pip` does not work on your computer, try:
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install pytest
 ```
 
-Create the folders for source code and tests:
+Now create the folders for source code and tests:
 
 ```bash
 mkdir src
@@ -122,7 +116,7 @@ mkdir tests
 
 ## Step 4: Understand ZOMBIES before coding
 
-ZOMBIES helps you choose test cases in a sensible order.
+ZOMBIES helps you choose test cases in a sensible order.[web:43][web:124][web:45]
 
 ### Z — Zero
 
@@ -150,7 +144,7 @@ How should invalid or unexpected situations be handled?
 
 ### S — Simple scenarios, simple solutions
 
-Always choose the smallest next step. Avoid building extra logic before tests demand it.[web:43][web:124][web:45][web:131]
+Always choose the smallest next step. Avoid building extra logic before tests demand it.
 
 For this tutorial, we will apply ZOMBIES to one simple function that returns default aircon settings.
 
@@ -237,7 +231,7 @@ def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
 
-That is exactly what **Simple scenarios, simple solutions** means.
+That is exactly what **Simple scenarios, simple solutions** means.[web:43][web:124][web:45]
 
 ---
 
@@ -364,7 +358,7 @@ That itself is a useful lesson: not every ZOMBIES letter will always produce a b
 
 - there is no invalid input yet
 - exception tests can be postponed
-- keep the solution simple until the design grows
+- keep the solution simple until the design grows[web:45]
 
 If later you change the function to accept user input such as a temperature or mode, that is where exception tests would become more important.
 
@@ -376,7 +370,7 @@ Now that you have several tests, do a small cleanup pass.
 
 ### Final production code
 
-`src/aircon.py`
+`src/aircon.py`:
 
 ```python
 def aircon_settings() -> str:
@@ -402,7 +396,7 @@ Run tests again after refactoring:
 pytest
 ```
 
-If tests still pass, your refactoring is safe.
+If tests still pass, your refactoring is safe.[web:96][web:97][web:100]
 
 ---
 
@@ -442,10 +436,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install pytest
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install pytest
 
       - name: Run pytest suites
         run: pytest
@@ -458,8 +452,8 @@ jobs:
 - Starts a fresh Ubuntu runner
 - Downloads your repository
 - Installs Python
-- Installs project dependencies
-- Runs `pytest`
+- Installs `pytest`
+- Runs `pytest`[web:112][web:117][web:119]
 
 This means the same tests you run locally are also verified automatically in GitHub.
 
@@ -467,7 +461,7 @@ This means the same tests you run locally are also verified automatically in Git
 
 ## Step 15: Commit and push the project
 
-Check the file status:
+Check file status:
 
 ```bash
 git status
@@ -497,13 +491,13 @@ git push origin main
 
 After pushing:
 
-1. Open the repository on GitHub
-2. Click the `Actions` tab
-3. Open the workflow named `TDD Aircon Settings CI`
-4. Open the `test` job
-5. Review each step
+1. Open the repository on GitHub.
+2. Click the `Actions` tab.
+3. Open the workflow named `TDD Aircon Settings CI`.
+4. Open the `test` job.
+5. Review each step.
 
-If everything is correct, you should see a green check mark.
+If everything is correct, you should see a green check mark.[web:112][web:119]
 
 ---
 
@@ -520,105 +514,7 @@ tdd-aircon-settings/
 │   ├── test_aircon_exact.py
 │   ├── test_aircon_structure.py
 │   └── test_aircon_semantics.py
-├── requirements.txt
 └── README.md
-```
-
----
-
-## Full file contents
-
-### `requirements.txt`
-
-```text
-pytest
-```
-
-### `src/aircon.py`
-
-```python
-def aircon_settings() -> str:
-    return "Mode: COOL, Temp: 24°C, Fan: AUTO"
-```
-
-### `tests/test_aircon_exact.py`
-
-```python
-from src.aircon import aircon_settings
-
-
-def test_aircon_returns_default_configuration():
-    assert aircon_settings() == "Mode: COOL, Temp: 24°C, Fan: AUTO"
-
-
-def test_aircon_settings_type_is_str():
-    result = aircon_settings()
-    assert isinstance(result, str)
-```
-
-### `tests/test_aircon_structure.py`
-
-```python
-from src.aircon import aircon_settings
-
-
-def test_aircon_settings_is_stable_across_calls():
-    assert aircon_settings() == aircon_settings()
-
-
-def test_aircon_settings_contains_mode_temp_fan_labels():
-    s = aircon_settings()
-    assert "Mode:" in s
-    assert "Temp:" in s
-    assert "Fan:" in s
-```
-
-### `tests/test_aircon_semantics.py`
-
-```python
-from src.aircon import aircon_settings
-
-
-def test_default_temp_is_in_comfort_range():
-    s = aircon_settings()
-    temp_part = s.split("Temp:").split(",").strip()[5]
-    temp_value = int(temp_part.replace("°C", ""))
-    assert 22 <= temp_value <= 26
-```
-
-### `.github/workflows/tdd-aircon.yml`
-
-```yaml
-name: TDD Aircon Settings CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run pytest suites
-        run: pytest
 ```
 
 ---
@@ -633,6 +529,6 @@ Use this checklist whenever you do TDD:
 - **Boundaries**: what are the edge conditions?
 - **Interfaces**: what should the public API look like?
 - **Exceptions**: what should happen for invalid situations?
-- **Simple**: solve only the next small problem, not the whole future design
+- **Simple**: solve only the next small problem, not the whole future design[web:43][web:124][web:45][web:131]
 
 That is the core learning goal of this workshop.
