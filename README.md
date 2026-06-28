@@ -1,12 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
-
-# use zombie as the tdd concept
-
-Yes — using **ZOMBIES** is a great way to teach TDD because it gives beginners a simple checklist for what test to write next: **Zero, One, Many, Boundaries, Interfaces, Exceptions, Simple scenarios/simple solutions**.[^1][^2][^3][^4]
-
-Below is a drop-in README version rewritten around the **ZOMBIES** concept while still using GitHub Actions.
-
-```markdown
 # TDD Aircon Settings with GitHub Actions using ZOMBIES
 
 This tutorial demonstrates **Test-Driven Development (TDD)** using the **ZOMBIES** concept and then connects the project to **GitHub Actions** so tests run automatically on every push.
@@ -29,7 +20,6 @@ This tutorial uses a single production function:
 def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
-
 
 ---
 
@@ -68,9 +58,9 @@ Before starting, make sure you have:
 3. Choose `New repository`.
 4. Enter the repository name:
 
-```text
-tdd-aircon-settings
-```
+   ```text
+   tdd-aircon-settings
+   ```
 
 5. Optionally add a description.
 6. Choose `Public`.
@@ -98,7 +88,6 @@ Open a terminal and run:
 git clone https://github.com/your-username/tdd-aircon-settings.git
 cd tdd-aircon-settings
 ```
-
 
 ---
 
@@ -128,7 +117,6 @@ Create the folders for source code and tests:
 mkdir src
 mkdir tests
 ```
-
 
 ---
 
@@ -353,7 +341,7 @@ from src.aircon import aircon_settings
 
 def test_default_temp_is_in_comfort_range():
     s = aircon_settings()
-    temp_part = s.split("Temp:")[^5].split(",").strip()
+    temp_part = s.split("Temp:").split(",").strip()[5]
     temp_value = int(temp_part.replace("°C", ""))
     assert 22 <= temp_value <= 26
 ```
@@ -394,7 +382,6 @@ Now that you have several tests, do a small cleanup pass.
 def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
-
 
 ### Final test files
 
@@ -464,7 +451,6 @@ jobs:
         run: pytest
 ```
 
-
 ### What this workflow does
 
 - Runs on every push to `main`
@@ -505,7 +491,6 @@ Push:
 git push origin main
 ```
 
-
 ---
 
 ## Step 16: View the GitHub Actions run
@@ -539,7 +524,6 @@ tdd-aircon-settings/
 └── README.md
 ```
 
-
 ---
 
 ## Full file contents
@@ -550,14 +534,12 @@ tdd-aircon-settings/
 pytest
 ```
 
-
 ### `src/aircon.py`
 
 ```python
 def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
-
 
 ### `tests/test_aircon_exact.py`
 
@@ -573,7 +555,6 @@ def test_aircon_settings_type_is_str():
     result = aircon_settings()
     assert isinstance(result, str)
 ```
-
 
 ### `tests/test_aircon_structure.py`
 
@@ -592,7 +573,6 @@ def test_aircon_settings_contains_mode_temp_fan_labels():
     assert "Fan:" in s
 ```
 
-
 ### `tests/test_aircon_semantics.py`
 
 ```python
@@ -601,11 +581,10 @@ from src.aircon import aircon_settings
 
 def test_default_temp_is_in_comfort_range():
     s = aircon_settings()
-    temp_part = s.split("Temp:")[^5].split(",").strip()
+    temp_part = s.split("Temp:").split(",").strip()[5]
     temp_value = int(temp_part.replace("°C", ""))
     assert 22 <= temp_value <= 26
 ```
-
 
 ### `.github/workflows/tdd-aircon.yml`
 
@@ -642,7 +621,6 @@ jobs:
         run: pytest
 ```
 
-
 ---
 
 ## ZOMBIES recap
@@ -658,28 +636,3 @@ Use this checklist whenever you do TDD:
 - **Simple**: solve only the next small problem, not the whole future design
 
 That is the core learning goal of this workshop.
-
-```
-
-If you want, I can do one more pass to make the example more **strictly ZOMBIES-shaped** by changing the function from `aircon_settings()` to something like `format_aircon_settings(mode, temp, fan)` so Zero, One, Boundary, and Exception cases become more explicit. [^1][^2][^3][^4]
-<span style="display:none">[^10][^11][^12][^13][^14][^15][^16][^6][^7][^8][^9]</span>
-
-<div align="center">⁂</div>
-
-[^1]: https://www.oreilly.com/library/view/use-zombies-in/9781098172732/ch01.html
-[^2]: https://orscsblog.wordpress.com/2017/10/16/thoughts-on-tdd-guided-by-zombies/
-[^3]: https://sammancoaching.org/learning_hours/small_steps/zombies.html
-[^4]: https://www.cososo.co.uk/2017/01/tdd-zombies/
-[^5]: https://gist.github.com/weibeld/f136048d0a82aacc063f42e684e3c494
-[^6]: https://smithery.ai/skills/withzombies/test-driven-development
-[^7]: https://www.youtube.com/watch?v=V-35zInQSNM
-[^8]: https://www.youtube.com/watch?v=nUys5Y-7Wms
-[^9]: http://blog.wingman-sw.com/tdd-guided-by-zombies
-[^10]: https://craftingtechteams.substack.com/p/part-1-structure-independent-behavior
-[^11]: https://www.linkedin.com/posts/techcornwall_tdd-softwaredevelopment-agile-activity-7256635877345439745-1vku
-[^12]: https://www.youtube.com/watch?v=BBb6hv5XLQw
-[^13]: https://www.linkedin.com/posts/jwgrenning_happy-halloween-tdd-can-be-guided-zombies-activity-7257753414602760194-2zaN
-[^14]: https://www.youtube.com/watch?v=HllCtqciPnU
-[^15]: https://www.linkedin.com/posts/thehale_tdd-guided-by-zombies-activity-7125211471172485120-lhXB
-[^16]: https://hackernoon.com/zombie-testing-one-behavior-at-a-time-9s2m3zjo```
-
