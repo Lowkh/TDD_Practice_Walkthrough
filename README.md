@@ -12,7 +12,7 @@ ZOMBIES is a simple guide for deciding what test to write next:
 - **E** = Exceptions
 - **S** = Simple scenarios, simple solutions
 
-The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.[^1][^2][^3][^4]
+The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.
 
 This tutorial uses a single production function:
 
@@ -21,12 +21,11 @@ def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
 
-
 ## What is GitHub Actions?
 
-GitHub Actions is GitHub’s built-in automation platform. It can automatically run tasks such as tests, builds, linting, packaging, and deployment whenever something happens in your repository, such as a push or a pull request.[^5][^6]
+GitHub Actions is GitHub’s built-in automation platform. It can automatically run tasks such as tests, builds, linting, packaging, and deployment whenever something happens in your repository, such as a push or a pull request.
 
-In this tutorial, GitHub Actions is used as a simple **continuous integration (CI)** tool. That means every time code is pushed to GitHub, GitHub automatically runs the test suite and reports whether it passed or failed.[^6][^5]
+In this tutorial, GitHub Actions is used as a simple **continuous integration (CI)** tool. That means every time code is pushed to GitHub, GitHub automatically runs the test suite and reports whether it passed or failed.
 
 Useful terms:
 
@@ -35,7 +34,6 @@ Useful terms:
 - **Job**: a group of steps that runs on a machine
 - **Step**: one command or action inside a job
 - **Runner**: the machine that executes the workflow
-
 
 ## What you need
 
@@ -47,7 +45,6 @@ Before starting, make sure you have:
 - A terminal or command prompt
 - A code editor such as VS Code
 
-
 ## Step 1: Create the GitHub repository
 
 1. Sign in to GitHub.
@@ -55,9 +52,9 @@ Before starting, make sure you have:
 3. Choose `New repository`.
 4. Enter the repository name:
 
-```text
-tdd-aircon-settings
-```
+   ```text
+   tdd-aircon-settings
+   ```
 
 5. Optionally add a description.
 6. Choose `Public`.
@@ -84,7 +81,6 @@ git clone https://github.com/your-username/tdd-aircon-settings.git
 cd tdd-aircon-settings
 ```
 
-
 ## Step 3: Install pytest and create folders
 
 Install pytest directly:
@@ -106,10 +102,9 @@ mkdir src
 mkdir tests
 ```
 
-
 ## Step 4: Understand ZOMBIES before coding
 
-ZOMBIES helps you choose test cases in a sensible order.[^2][^3][^1]
+ZOMBIES helps you choose test cases in a sensible order.
 
 ### Z — Zero
 
@@ -157,7 +152,6 @@ This is both the **Zero** and **One** case for this tiny exercise:
 
 - **Zero**: there are no inputs
 - **One**: there is one default expected output
-
 
 ## Step 6: RED — write the first failing test
 
@@ -217,7 +211,7 @@ def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
 
-That is exactly what **Simple scenarios, simple solutions** means.[^3][^1][^2]
+That is exactly what **Simple scenarios, simple solutions** means.
 
 ## Step 9: I — define the interface clearly
 
@@ -315,7 +309,7 @@ from src.aircon import aircon_settings
 
 def test_default_temp_is_in_comfort_range():
     s = aircon_settings()
-    temp_part = s.split("Temp:")[^1].split(",")[^0].strip()
+    temp_part = s.split("Temp:")[1].split(",")[0].strip()
     temp_value = int(temp_part.replace("°C", ""))
     assert 22 <= temp_value <= 26
 ```
@@ -336,7 +330,7 @@ That itself is a useful lesson: not every ZOMBIES letter will always produce a b
 
 - there is no invalid input yet
 - exception tests can be postponed
-- keep the solution simple until the design grows[^3]
+- keep the solution simple until the design grows
 
 If later you change the function to accept user input such as a temperature or mode, that is where exception tests would become more important.
 
@@ -352,7 +346,6 @@ Now that you have several tests, do a small cleanup pass.
 def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
-
 
 ### Final test files
 
@@ -373,7 +366,7 @@ Run tests again after refactoring:
 pytest
 ```
 
-If tests still pass, your refactoring is safe.[^7][^8]
+If tests still pass, your refactoring is safe.
 
 ## Step 14: Add GitHub Actions after local TDD works
 
@@ -432,7 +425,6 @@ jobs:
           needs_json: ${{ toJSON(needs) }}
 ```
 
-
 ### What this workflow does
 
 - Runs on every push to `main`
@@ -442,9 +434,9 @@ jobs:
 - Installs Python
 - Installs `pytest`
 - Runs `pytest`
-- Sends a Discord notification if the test job fails[^9][^5][^6]
+- Sends a Discord notification if the test job fails
 
-This means the same tests you run locally are also verified automatically in GitHub, and failures are pushed to Discord for visibility.[^9]
+This means the same tests you run locally are also verified automatically in GitHub, and failures are pushed to Discord for visibility.
 
 ## Step 15: Add the Discord webhook secret
 
@@ -472,9 +464,9 @@ Instead:
 5. Click **New repository secret**.
 6. Set the name to:
 
-```text
-DISCORD_WEBHOOK_URL
-```
+   ```text
+   DISCORD_WEBHOOK_URL
+   ```
 
 7. Paste the webhook URL as the value.
 8. Save it.
@@ -507,7 +499,6 @@ Push:
 git push origin main
 ```
 
-
 ## Step 17: View the GitHub Actions run
 
 After pushing:
@@ -518,9 +509,9 @@ After pushing:
 4. Open the `test` job.
 5. Review each step.
 
-If everything is correct, you should see a green check mark.[^5][^6]
+If everything is correct, you should see a green check mark.
 
-If the tests fail, GitHub Actions will mark the workflow as failed and the Discord notification job will send an alert to the configured channel.[^9]
+If the tests fail, GitHub Actions will mark the workflow as failed and the Discord notification job will send an alert to the configured channel.
 
 ## Project structure
 
@@ -538,7 +529,6 @@ tdd-aircon-settings/
 └── README.md
 ```
 
-
 ## Full file contents
 
 ### `src/aircon.py`
@@ -547,7 +537,6 @@ tdd-aircon-settings/
 def aircon_settings() -> str:
     return "Mode: COOL, Temp: 24°C, Fan: AUTO"
 ```
-
 
 ### `tests/test_aircon_exact.py`
 
@@ -563,7 +552,6 @@ def test_aircon_settings_type_is_str():
     result = aircon_settings()
     assert isinstance(result, str)
 ```
-
 
 ### `tests/test_aircon_structure.py`
 
@@ -582,7 +570,6 @@ def test_aircon_settings_contains_mode_temp_fan_labels():
     assert "Fan:" in s
 ```
 
-
 ### `tests/test_aircon_semantics.py`
 
 ```python
@@ -591,11 +578,10 @@ from src.aircon import aircon_settings
 
 def test_default_temp_is_in_comfort_range():
     s = aircon_settings()
-    temp_part = s.split("Temp:")[^1].split(",")[^0].strip()
+    temp_part = s.split("Temp:")[1].split(",")[0].strip()
     temp_value = int(temp_part.replace("°C", ""))
     assert 22 <= temp_value <= 26
 ```
-
 
 ### `.github/workflows/tdd-aircon.yml`
 
@@ -644,7 +630,6 @@ jobs:
           needs_json: ${{ toJSON(needs) }}
 ```
 
-
 ## ZOMBIES recap
 
 Use this checklist whenever you do TDD:
@@ -655,27 +640,6 @@ Use this checklist whenever you do TDD:
 - **Boundaries**: what are the edge conditions?
 - **Interfaces**: what should the public API look like?
 - **Exceptions**: what should happen for invalid situations?
-- **Simple**: solve only the next small problem, not the whole future design[^4][^1][^2][^3]
+- **Simple**: solve only the next small problem, not the whole future design
 
 That is the core learning goal of this workshop.
-
-<div align="center">⁂</div>
-
-[^1]: https://www.oreilly.com/library/view/use-zombies-in/9781098172732/ch01.html
-
-[^2]: https://orscsblog.wordpress.com/2017/10/16/thoughts-on-tdd-guided-by-zombies/
-
-[^3]: https://sammancoaching.org/learning_hours/small_steps/zombies.html
-
-[^4]: https://www.cososo.co.uk/2017/01/tdd-zombies/
-
-[^5]: https://docs.github.com/en/enterprise-server@3.21/actions/tutorials/build-and-test-code/python
-
-[^6]: https://github.com/actions/setup-python
-
-[^7]: https://stackabuse.com/test-driven-development-with-pytest/
-
-[^8]: https://intersect-training.org/testing/instructor/TDD.html
-
-[^9]: https://github.com/marketplace/actions/discord-workflow-notification
-
