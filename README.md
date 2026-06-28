@@ -12,7 +12,7 @@ ZOMBIES is a simple guide for deciding what test to write next:
 - **E** = Exceptions
 - **S** = Simple scenarios, simple solutions
 
-The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.[web:43][web:124][web:45][web:131]
+The idea is to grow the code in very small steps. Start with the simplest case, write a failing test, make it pass with the smallest possible code, and then continue.
 
 This tutorial uses a single production function:
 
